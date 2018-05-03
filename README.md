@@ -1,5 +1,5 @@
 # predis
-golang操作redis的实例，自定义了一个连接池<br/>其中socket通讯和解析这块，是直接拿之前写的lredis代码，凑合着看吧，后面会继续完善
+golang操作redis的实例，自定义了一个连接池<br/>其中socket通讯和解析这块，是直接拿之前写的lredis代码，凑合着看吧，后面会继续完善<br>连接池这块是用channel来实现的，下面再写一个，通过List来实现。
 
 
 ## 安装:
