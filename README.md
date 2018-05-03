@@ -12,7 +12,6 @@ go get github.com/jfeige/lredis
 使用:
 
 config := &PoolConfig{
-
 	MaxCaps :100,
 	MinCaps :10,
 	IdleTimeout : 10*time.Second,
@@ -23,7 +22,6 @@ config := &PoolConfig{
 
 pool,err := NewPool(config)
 if err != nil{
-
 	fmt.Println(err)
 	return
 }
