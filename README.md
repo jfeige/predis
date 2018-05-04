@@ -4,10 +4,9 @@ golang操作redis的实例，自定义了一个连接池<br/>其中socket通讯�
 
 ## 安装:
 
-
+```
 go get github.com/jfeige/predis
-
-
+```
 
 
 ## 使用:
