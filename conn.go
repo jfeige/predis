@@ -36,6 +36,7 @@ func (c *Conn) Cmd(command string,args ...interface{})(replay interface{},err er
 	c.pending = 0
 
 	c.writeCommand(command,args)
+
 	if err := c.bw.Flush();err != nil{
 		return nil,err
 	}
@@ -72,7 +73,7 @@ func (c *Conn)readReply()(replay interface{},err error){
 			return line[1:], nil
 		}
 	case '-':
-		return errors.New(string(line[1])), nil
+		return errors.New(string(line[1:])), nil
 	case ':':
 		return line[1:],nil
 	case '$': //$5\r\nlifei\r\n
@@ -85,7 +86,7 @@ func (c *Conn)readReply()(replay interface{},err error){
 			return nil, err
 		}
 		if len(tmp_line) == 0 {
-			return nil, errors.New("value is null")
+			return nil, ErrNil
 		}
 		return tmp_line, nil
 	case '*':
@@ -104,7 +105,6 @@ func (c *Conn)readReply()(replay interface{},err error){
 		return ret, nil
 	}
 	return nil, errors.New("unexpected response line")
-
 }
 
 func (c *Conn)readLine()([]byte,error){
@@ -181,12 +181,5 @@ func (c *Conn) writeBytes(arg []byte) {
 func (c *Conn) Flush()error{
 	return c.bw.Flush()
 }
-
-
-//func (c *Conn) Close()error{
-//
-//	return c.conn.Close()
-//}
-
 
 

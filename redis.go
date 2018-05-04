@@ -1,7 +1,6 @@
 package predis
 
 import (
-	"errors"
 	"strconv"
 	"net"
 	"bufio"
@@ -43,9 +42,11 @@ func Int(replay interface{},err error)(int,error){
 	case []byte:
 		return strconv.Atoi(string(replay))
 	case nil:
-		return 0,errors.New("response is nil")
+		return 0,ErrNil
+	case error:
+		return 0,replay
 	default:
-		return 0,errors.New("unKonow response type")
+		return 0,checkErrResponse(replay)
 	}
 }
 
@@ -59,9 +60,11 @@ func String(replay interface{},err error)(string,error){
 	case string:
 		return replay,nil
 	case nil:
-		return "",errors.New("response is nil")
+		return "",ErrNil
+	case error:
+		return "",replay
 	default:
-		return "",errors.New("unKonow response type")
+		return "",checkErrResponse(replay)
 	}
 }
 
@@ -75,9 +78,11 @@ func Bool(replay interface{},err error)(bool,error){
 	case int64:
 		return replay != 0,nil
 	case nil:
-		return false,errors.New("response is nil")
+		return false,ErrNil
+	case error:
+		return false,replay
 	default:
-		return false,errors.New("unKonwn response type")
+		return false,checkErrResponse(replay)
 	}
 }
 
@@ -98,9 +103,11 @@ func StringMap(replay interface{},err error)(map[string]string,error){
 		}
 		return result,nil
 	case nil:
-		return nil,errors.New("response is nil!")
+		return nil,ErrNil
+	case error:
+		return nil,replay
 	default:
-		return nil,errors.New("unKonown response type!")
+		return nil,checkErrResponse(replay)
 	}
 }
 
@@ -120,8 +127,10 @@ func Strings(replay interface{},err error)([]string,error){
 		}
 		return result,nil
 	case nil:
-		return nil,errors.New("response is nil!")
+		return nil,ErrNil
+	case error:
+		return nil,replay
 	default:
-		return nil,errors.New("unKonown response type!")
+		return nil,checkErrResponse(replay)
 	}
 }
