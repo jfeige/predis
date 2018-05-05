@@ -11,7 +11,7 @@ func Test_Pool_List(t *testing.T){
 
 	var(
 		network = "tcp"
-		address = "182.92.158.94:6379"
+		address = "127.0.0.1:6379"
 		pwd = "lifei"
 	)
 	config := &PoolList_Config{
