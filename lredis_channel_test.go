@@ -9,7 +9,7 @@ import (
 func Test_Send(t *testing.T) {
 	var(
 		network = "tcp"
-		address = "182.92.158.94:6379"
+		address = "127.0.0.1:6379"
 		pwd = ""
 	)
 	config := &PoolConfig{
