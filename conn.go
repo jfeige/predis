@@ -36,7 +36,6 @@ func (c *Conn) Cmd(command string,args ...interface{})(replay interface{},err er
 	c.pending = 0
 
 	c.writeCommand(command,args)
-
 	if err := c.bw.Flush();err != nil{
 		return nil,err
 	}
@@ -123,7 +122,6 @@ func (c *Conn)readLine()([]byte,error){
 
 
 func (c *Conn) writeCommand(command string,args []interface{}){
-
 	c.writeLen(args)
 	c.writeString(command)
 
