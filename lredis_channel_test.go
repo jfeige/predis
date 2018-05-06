@@ -35,7 +35,7 @@ func Test_Send(t *testing.T) {
 	defer func(){
 		pool.Put(conn)
 		fmt.Printf("--3--当前连接池中数量:%d\n",pool.Conns())
-	}()			//很重要，把连接重新放入连接池
+	}()			
 	dbsize,err := String(conn.Cmd("dbsize"))
 
 	fmt.Println(dbsize,err)
