@@ -22,34 +22,34 @@ import (
 
  type PoolList struct {
  	sync.Mutex
- 	conns *list.List
- 	mincaps int
- 	maxcaps int
- 	idletimeout time.Duration
- 	dial func()(*Conn,error)
+ 	Conns *list.List
+ 	MinCaps int
+ 	MaxCaps int
+ 	IdleTimeout time.Duration
+ 	Dial func()(*Conn,error)
  }
 
 
  //初始化连接池
 func NewPoolList(config *PoolList_Config)(*PoolList,error){
 	pool := &PoolList{
-		mincaps:config.MinCaps,
-		maxcaps:config.MaxCaps,
-		idletimeout:config.IdleTimeout,
-		conns:list.New(),
-		dial:config.Dial,
+		MinCaps:config.MinCaps,
+		MaxCaps:config.MaxCaps,
+		IdleTimeout:config.IdleTimeout,
+		Conns:list.New(),
+		Dial:config.Dial,
 	}
-	if pool.maxcaps > 0 && pool.mincaps > pool.maxcaps{
-		return nil,fmt.Errorf("predis:configuration parameter error.mincaps:%d,maxcaps:%d",pool.mincaps,pool.maxcaps)
+	if pool.MaxCaps > 0 && pool.MinCaps > pool.MaxCaps{
+		return nil,fmt.Errorf("predis:configuration parameter error.mincaps:%d,maxcaps:%d",pool.MinCaps,pool.MaxCaps)
 	}
 	if config.Created{
 		for i := 0; i < config.MinCaps;i++{
-			c,err := pool.dial()
+			c,err := pool.Dial()
 			if err != nil{
 				pool.Release()
 				return nil,err
 			}
-			pool.conns.PushFront(c)
+			pool.Conns.PushFront(c)
 		}
 	}
 
@@ -62,23 +62,23 @@ func NewPoolList(config *PoolList_Config)(*PoolList,error){
  	this.Lock()
  	defer this.Unlock()
 
- 	for e := this.conns.Back();e !=nil;e.Next(){
+ 	for e := this.Conns.Back();e !=nil;e.Next(){
 		c := e.Value.(*Conn)
- 		if timeout := this.idletimeout;timeout > 0{
-			if c.t.Add(this.idletimeout).Before(time.Now()){
+ 		if timeout := this.IdleTimeout;timeout > 0{
+			if c.t.Add(this.IdleTimeout).Before(time.Now()){
 				//连接已超时,关闭该连接
-				this.conns.Remove(e)
+				this.Conns.Remove(e)
 				this.close(c)
 				continue
 			}
 		}
-		this.conns.Remove(e)
+		this.Conns.Remove(e)
 		return c,nil
 	}
 
 
 	//生成新的连接
-	c,err := this.dial()
+	c,err := this.Dial()
 	if err != nil{
 		return nil,err
 	}
@@ -92,14 +92,14 @@ func (this *PoolList) Put(c *Conn){
 	this.Lock()
 	defer this.Unlock()
 
-	if this.maxcaps > 0 &&  this.conns.Len() >= this.maxcaps{
+	if this.MaxCaps > 0 &&  this.Conns.Len() >= this.MaxCaps{
 		return
 	}
 	c.bw = bufio.NewWriter(c.conn)
 	c.br = bufio.NewReader(c.conn)
 	c.t = time.Now()
 	c.pending = 0
-	this.conns.PushFront(c)
+	this.Conns.PushFront(c)
 }
 
 
@@ -108,7 +108,7 @@ func (this *PoolList) Put(c *Conn){
  func (this *PoolList) GetCnt()int{
  	this.Lock()
  	defer this.Unlock()
- 	return this.conns.Len()
+ 	return this.Conns.Len()
  }
 
 
@@ -123,13 +123,13 @@ func (this *PoolList) Put(c *Conn){
  	this.Lock()
  	defer this.Lock()
 
- 	if this.conns == nil{
+ 	if this.Conns == nil{
  		return
 	}
-	for e := this.conns.Front();e != nil;e.Next(){
+	for e := this.Conns.Front();e != nil;e.Next(){
 		idleConn := e.Value.(*Conn)
 		idleConn.conn.Close()
-		this.conns.Remove(e)
+		this.Conns.Remove(e)
 	}
 	return
  }
