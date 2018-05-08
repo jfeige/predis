@@ -68,15 +68,18 @@ if err != nil{
 defer pool.Put(conn)	//把连接重新放入池中
 ...
 //do something
+```
 
-or
+##### or
+
+```
 conn,err := pool.GetConn()
 if err != nil{
 	fmt.Println(err)
 	return
 }
 defer func(){
-	pool.Put(conn)
+	pool.Put(conn) //把连接重新放入池中
 }()
 ...
 //do something
