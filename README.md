@@ -11,7 +11,7 @@ go get github.com/jfeige/predis
 ## 使用:
 
 
-### 连接池配置
+### 初始化连接池
 ```
 config := &PoolConfig{
 
@@ -21,9 +21,17 @@ config := &PoolConfig{
 	Dial: func() (*Conn, error) {
 		return Dial(network,address,pwd)
 	},
+}
+pool,err := NewPool(config)
+if err != nil{
+
+	fmt.Println(err)
+	return
 	
 }
-or
+```
+##### or
+```
 config := &PoolList_Config{
 	MinCaps:2,
 	MaxCaps:10,
@@ -32,24 +40,25 @@ config := &PoolList_Config{
 		return Dial(network,address,pwd)
 	},
 }
-
-```
-### 初始化连接池
-```
-pool,err := NewPool(config)
-if err != nil{
-
-	fmt.Println(err)
-	return
-	
-}
-or
 pool,err := NewPoolList(config)
 if err != nil{
 	fmt.Println(err)
 	return
 }
 ```
+##### or
+```
+pool := &PoolList{
+	Conns:list.New(),
+	MinCaps:2,
+	MaxCaps:10,
+	IdleTimeout:10*time.Second,
+	Dial: func() (*Conn, error) {
+		return Dial(network,address,pwd)
+	},
+}
+```
+
 ### 获取连接
 ```
 conn,err := pool.Get()
