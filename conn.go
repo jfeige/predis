@@ -41,7 +41,6 @@ func (c *Conn) Cmd(command string,args ...interface{})(replay interface{},err er
 	}
 
 	for i := 0; i <= pending;i++{
-		//解析返回值
 		replay,err = c.readReply()
 		if err != nil{
 			return nil,err
